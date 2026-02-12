@@ -42,7 +42,15 @@
       "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc commit -m \"$\\(cat <<''EOF''\nMigrate from npm/pnpm to bun\n\nReplace all node package manager references with bun equivalents:\n- npm install → bun install\n- npm ci → bun install --frozen-lockfile\n- npm run → bun run\n- npx → bunx\n- npm view → bun info\n- node:20-alpine → oven/bun:1\n- package-lock.json/pnpm-lock.yaml → bun.lock\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc add README.md)",
       "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc commit -m \"$\\(cat <<''EOF''\nUpdate README for Ralph Starter Kit\n\nAdd Bun starter kit documentation with quick start, commands, and Docker\ninstructions. Clarify it can be used for frontend, backend, or monorepo\nprojects. Keep existing Ralph pattern documentation.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc log --oneline -3)"
+      "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc log --oneline -3)",
+      "Bash(gh auth:*)",
+      "Bash(git -C /Users/brauliosalhuana/git/chat-agent-poc remote get-url origin)",
+      "Bash(git -C /Users/brauliosalhuana/git/working-title log --oneline -15)",
+      "Bash(git -C /Users/brauliosalhuana/git/working-title show --stat d027e82)",
+      "Bash(git -C /Users/brauliosalhuana/git/working-title log --all --oneline)",
+      "Bash(git -C /Users/brauliosalhuana/git/working-title remote -v)",
+      "Bash(git -C /Users/brauliosalhuana/git/working-title log --reverse --oneline)",
+      "WebFetch(domain:developer.themoviedb.org)"
     ],
     "deny": [],
     "ask": []
