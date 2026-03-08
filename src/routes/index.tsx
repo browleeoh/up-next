@@ -7,7 +7,6 @@ import {
   Bookmark,
   Play,
   CheckCircle,
-  Clock,
   TrendingUp,
   Search,
 } from "lucide-react";
@@ -51,23 +50,6 @@ function HomePage() {
     []
   );
 
-  const totalWatchTime = useLiveQuery(async () => {
-    const watched = await db.mediaItems
-      .where("status")
-      .equals("watched")
-      .toArray();
-    return watched.reduce((sum, item) => sum + (item.runtime || 0), 0);
-  }, [], 0);
-
-  const formatWatchTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    if (days > 0) {
-      return `${days}d ${hours % 24}h`;
-    }
-    return `${hours}h ${minutes % 60}m`;
-  };
-
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -82,7 +64,7 @@ function HomePage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           icon={<Bookmark className="h-5 w-5 text-status-watchlist" />}
           label="Watchlist"
@@ -100,12 +82,6 @@ function HomePage() {
           label="Watched"
           value={watchedCount}
           href="/watched"
-        />
-        <StatCard
-          icon={<Clock className="h-5 w-5 text-amber-500" />}
-          label="Watch Time"
-          value={formatWatchTime(totalWatchTime)}
-          href="/stats"
         />
       </div>
 
