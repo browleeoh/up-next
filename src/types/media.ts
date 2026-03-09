@@ -57,6 +57,51 @@ export interface TmdbSearchResponse {
   total_results: number;
 }
 
+export interface TmdbPersonSearchResult {
+  id: number;
+  name: string;
+  profile_path: string | null;
+  known_for_department: string;
+  known_for: TmdbSearchResult[];
+}
+
+export interface TmdbPersonSearchResponse {
+  page: number;
+  results: TmdbPersonSearchResult[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface TmdbCombinedCredit {
+  id: number;
+  media_type: "movie" | "tv";
+  title?: string;
+  name?: string;
+  poster_path: string | null;
+  backdrop_path: string | null;
+  overview: string;
+  vote_average: number;
+  vote_count: number;
+  release_date?: string;
+  first_air_date?: string;
+  genre_ids: number[];
+  popularity: number;
+}
+
+export interface TmdbCombinedCreditsResponse {
+  cast: TmdbCombinedCredit[];
+  crew: TmdbCombinedCredit[];
+}
+
+export interface SearchFilters {
+  query?: string;
+  year?: number;
+  genre?: number;
+  personId?: number;
+  personName?: string;
+  type?: "movie" | "tv" | "multi";
+}
+
 export interface TmdbGenre {
   id: number;
   name: string;
