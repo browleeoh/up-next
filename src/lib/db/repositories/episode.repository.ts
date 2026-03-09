@@ -32,7 +32,8 @@ export const episodeRepository = {
     mediaId: number,
     seasonNumber: number,
     episodeNumber: number,
-    watched: boolean
+    watched: boolean,
+    runtimeMinutes: number | null = null
   ): Promise<void> {
     const existing = await this.getProgress(mediaId, seasonNumber, episodeNumber);
 
@@ -40,6 +41,9 @@ export const episodeRepository = {
       await db.episodeProgress.update(existing.id!, {
         watched,
         watchedDate: watched ? new Date() : null,
+        runtimeMinutes: watched
+          ? runtimeMinutes ?? existing.runtimeMinutes ?? null
+          : null,
       });
     } else {
       await db.episodeProgress.add({
@@ -48,6 +52,7 @@ export const episodeRepository = {
         episodeNumber,
         watched,
         watchedDate: watched ? new Date() : null,
+        runtimeMinutes: watched ? runtimeMinutes : null,
       });
     }
   },
@@ -55,12 +60,18 @@ export const episodeRepository = {
   async setSeasonWatched(
     mediaId: number,
     seasonNumber: number,
-    episodeNumbers: number[],
+    episodes: Array<{ episodeNumber: number; runtimeMinutes: number | null }>,
     watched: boolean
   ): Promise<void> {
     await db.transaction("rw", db.episodeProgress, async () => {
-      for (const episodeNumber of episodeNumbers) {
-        await this.setWatched(mediaId, seasonNumber, episodeNumber, watched);
+      for (const episode of episodes) {
+        await this.setWatched(
+          mediaId,
+          seasonNumber,
+          episode.episodeNumber,
+          watched,
+          episode.runtimeMinutes
+        );
       }
     });
   },

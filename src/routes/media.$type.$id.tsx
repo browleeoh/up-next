@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useEffect } from "react";
 import { tmdbApi } from "@/lib/services/tmdb/api";
 import { db } from "@/lib/db/database";
 import { mediaRepository } from "@/lib/db/repositories/media.repository";
+import { buildMediaMetadata } from "@/lib/services/media-metadata";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusPicker } from "@/components/media/status-picker";
@@ -90,6 +92,26 @@ function MediaDetailPage() {
     },
   });
 
+  useEffect(() => {
+    if (!localItem?.id || !tmdbData) {
+      return;
+    }
+
+    const metadata = buildMediaMetadata(mediaType, tmdbData);
+    const needsSync =
+      localItem.runtime == null ||
+      localItem.posterPath == null ||
+      localItem.releaseYear == null ||
+      localItem.genres.length === 0 ||
+      (mediaType === "tv" && localItem.totalEpisodes == null);
+
+    if (!needsSync) {
+      return;
+    }
+
+    void mediaRepository.update(localItem.id, metadata);
+  }, [localItem, mediaType, tmdbData]);
+
   if (tmdbLoading) {
     return <MediaDetailSkeleton />;
   }
@@ -106,10 +128,11 @@ function MediaDetailPage() {
   }
 
   const isMovie = "title" in tmdbData;
-  const title = isMovie ? tmdbData.title : tmdbData.name;
+  const metadata = buildMediaMetadata(mediaType, tmdbData);
+  const title = metadata.title;
   const releaseDate = isMovie ? tmdbData.release_date : tmdbData.first_air_date;
   const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : null;
-  const runtime = isMovie ? tmdbData.runtime : tmdbData.episode_run_time?.[0] || null;
+  const runtime = metadata.runtime;
 
   const handleStatusChange = (status: MediaStatus) => {
     updateStatusMutation.mutate({
@@ -117,11 +140,7 @@ function MediaDetailPage() {
       itemData: {
         tmdbId: mediaId,
         type: mediaType,
-        title,
-        posterPath: tmdbData.poster_path,
-        releaseYear,
-        runtime,
-        genres: tmdbData.genres?.map((g) => g.id) || [],
+        ...metadata,
         dateAdded: new Date(),
         dateCompleted: status === "watched" ? new Date() : null,
         rating: null,

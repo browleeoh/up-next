@@ -15,6 +15,14 @@ export function EpisodeList({
   mediaId,
   seasonNumber,
 }: EpisodeListProps) {
+  const mediaItem = useLiveQuery(
+    async () => {
+      if (!mediaId) return undefined;
+      return db.mediaItems.get(mediaId);
+    },
+    [mediaId]
+  );
+
   const progress = useLiveQuery(
     async () => {
       if (!mediaId) return new Map<number, boolean>();
@@ -36,11 +44,13 @@ export function EpisodeList({
   const handleToggleEpisode = async (episodeNumber: number) => {
     if (!mediaId) return;
     const currentWatched = progress.get(episodeNumber) || false;
+    const episode = episodes.find((entry) => entry.episode_number === episodeNumber);
     await episodeRepository.setWatched(
       mediaId,
       seasonNumber,
       episodeNumber,
-      !currentWatched
+      !currentWatched,
+      episode?.runtime ?? mediaItem?.runtime ?? null
     );
   };
 
@@ -50,7 +60,10 @@ export function EpisodeList({
     await episodeRepository.setSeasonWatched(
       mediaId,
       seasonNumber,
-      episodes.map((ep) => ep.episode_number),
+      episodes.map((episode) => ({
+        episodeNumber: episode.episode_number,
+        runtimeMinutes: episode.runtime ?? mediaItem?.runtime ?? null,
+      })),
       newWatched
     );
   };

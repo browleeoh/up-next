@@ -14,7 +14,7 @@ export const exportService = {
     const episodeProgress = await db.episodeProgress.toArray();
 
     return {
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       mediaItems,
       episodeProgress,
@@ -22,7 +22,7 @@ export const exportService = {
   },
 
   async importAll(data: ExportData): Promise<void> {
-    if (!data.version || !data.mediaItems) {
+    if (!data.version || data.version > 2 || !data.mediaItems) {
       throw new Error("Invalid backup file format");
     }
 
@@ -43,6 +43,7 @@ export const exportService = {
           ...itemWithoutId,
           dateAdded: new Date(item.dateAdded),
           dateCompleted: item.dateCompleted ? new Date(item.dateCompleted) : null,
+          totalEpisodes: item.totalEpisodes ?? null,
         };
 
         const newId = await db.mediaItems.add(mediaItem) as number;
@@ -62,6 +63,7 @@ export const exportService = {
               ...epWithoutId,
               mediaId: newMediaId,
               watchedDate: ep.watchedDate ? new Date(ep.watchedDate) : null,
+              runtimeMinutes: ep.runtimeMinutes ?? null,
             });
           }
         }

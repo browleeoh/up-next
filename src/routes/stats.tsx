@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/database";
+import { getWatchTimeSummary } from "@/lib/services/watch-time.service";
 import { Card } from "@/components/ui/card";
 import { GenrePieChart } from "@/components/stats/genre-pie-chart";
 import { WatchTimeCard } from "@/components/stats/watch-time-card";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/stats")({
   component: StatsPage,
 });
 
-function StatsPage() {
+export function StatsPage() {
   const stats = useLiveQuery(async () => {
     const allItems = await db.mediaItems.toArray();
     const watched = allItems.filter((i) => i.status === "watched");
@@ -27,11 +28,7 @@ function StatsPage() {
 
     const movies = watched.filter((i) => i.type === "movie");
     const tvShows = watched.filter((i) => i.type === "tv");
-
-    const totalWatchTime = watched.reduce(
-      (sum, item) => sum + (item.runtime || 0),
-      0
-    );
+    const watchTime = await getWatchTimeSummary();
 
     const ratedItems = watched.filter((i) => i.rating !== null);
     const averageRating =
@@ -65,7 +62,7 @@ function StatsPage() {
       watchlist: watchlist.length,
       movies: movies.length,
       tvShows: tvShows.length,
-      totalWatchTime,
+      totalWatchTime: watchTime.totalMinutes,
       averageRating,
       genreCounts,
       activityByMonth,
@@ -93,6 +90,7 @@ function StatsPage() {
   };
 
   const watchTime = formatWatchTime(stats.totalWatchTime);
+  const hasStatsData = stats.watched > 0 || stats.totalWatchTime > 0;
 
   return (
     <div className="space-y-6">
@@ -151,7 +149,7 @@ function StatsPage() {
       <WatchTimeCard totalMinutes={stats.totalWatchTime} />
 
       {/* Empty State */}
-      {stats.watched === 0 && (
+      {!hasStatsData && (
         <Card className="p-8 text-center">
           <TrendingUp className="mx-auto h-12 w-12 text-slate-600 mb-4" />
           <h3 className="text-lg font-medium mb-2">No statistics yet</h3>
