@@ -1,4 +1,5 @@
 import { Bookmark, Play, Check, Trash2 } from "lucide-react";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { MediaStatus } from "@/types/media";
 
 interface StatusPickerProps {
@@ -12,49 +13,45 @@ export function StatusPicker({
   onStatusChange,
   onRemove,
 }: StatusPickerProps) {
-  const statuses: { status: MediaStatus; label: string; icon: typeof Bookmark; color: string }[] = [
+  const statuses: { status: MediaStatus; label: string; icon: typeof Bookmark }[] = [
     {
       status: "watchlist",
       label: "Watchlist",
       icon: Bookmark,
-      color: "bg-status-watchlist hover:bg-status-watchlist/80",
     },
     {
       status: "watching",
       label: "Watching",
       icon: Play,
-      color: "bg-status-watching hover:bg-status-watching/80",
     },
     {
       status: "watched",
       label: "Watched",
       icon: Check,
-      color: "bg-status-watched hover:bg-status-watched/80",
     },
   ];
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {statuses.map(({ status, label, icon: Icon, color }) => {
-        const isActive = currentStatus === status;
-        return (
-          <button
-            key={status}
-            onClick={() => onStatusChange(status)}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-              isActive
-                ? `${color} text-white`
-                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            {label}
-          </button>
-        );
-      })}
+      <SegmentedControl
+        value={currentStatus || "watchlist"}
+        onValueChange={(value) => onStatusChange(value as MediaStatus)}
+        ariaLabel="Update media status"
+        itemClassName="px-4 py-2"
+        items={statuses.map(({ status, label, icon: Icon }) => ({
+          value: status,
+          label: (
+            <>
+              <Icon className="h-4 w-4" />
+              {label}
+            </>
+          ),
+        }))}
+      />
 
       {currentStatus && onRemove && (
         <button
+          type="button"
           onClick={onRemove}
           className="flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/30"
         >
