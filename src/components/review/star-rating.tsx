@@ -13,7 +13,7 @@ export function StarRating({ value, onChange, max = 10 }: StarRatingProps) {
     <div className="space-y-3">
       <RadioGroup
         label="Your rating"
-        description={value > 0 ? `${value}/${max}` : "Choose a rating from 1 to 10."}
+        description={value > 0 ? `${value}/${max}` : `Choose a rating from 1 to ${max}.`}
         value={value > 0 ? String(value) : ""}
         onValueChange={(nextValue) => onChange(Number(nextValue))}
         orientation="horizontal"
