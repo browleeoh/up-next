@@ -7,6 +7,7 @@ interface SearchInputProps {
   onChange: (value: string) => void;
   placeholder?: string;
   autoFocus?: boolean;
+  ariaLabel?: string;
 }
 
 export function SearchInput({
@@ -14,6 +15,7 @@ export function SearchInput({
   onChange,
   placeholder = "Search...",
   autoFocus = false,
+  ariaLabel = "Search",
 }: SearchInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<number>();
@@ -61,11 +63,14 @@ export function SearchInput({
         value={localValue}
         onChange={handleChange}
         placeholder={placeholder}
+        aria-label={ariaLabel}
         className="pl-10 pr-10"
       />
       {localValue && (
         <button
+          type="button"
           onClick={handleClear}
+          aria-label="Clear search"
           className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-slate-500 hover:bg-slate-700 hover:text-slate-300"
         >
           <X className="h-4 w-4" />
