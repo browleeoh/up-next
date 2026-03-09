@@ -37,7 +37,7 @@ export function StatusPicker({
       <RadioGroup
         label="Status"
         description="Choose how this title should appear in your library."
-        value={currentStatus || "watchlist"}
+        value={currentStatus ?? undefined}
         onValueChange={(value) => onStatusChange(value as MediaStatus)}
         orientation="horizontal"
         itemClassName="px-4 py-2"

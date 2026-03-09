@@ -13,7 +13,7 @@ interface RadioOption {
 
 interface RadioGroupProps {
   label: string;
-  value: string;
+  value?: string;
   onValueChange: (value: string) => void;
   options: RadioOption[];
   description?: string;
