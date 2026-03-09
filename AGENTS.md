@@ -20,3 +20,4 @@ Ralph is an autonomous AI agent loop that runs AI coding tools (Claude Code) rep
 - Search state on `src/routes/search.tsx` is URL-driven; richer search now uses explicit `year`, `genre`, and `personId/personName` params instead of hidden parsing so back/forward navigation and shared links preserve refinements.
 - Person-based search is suggestion-driven: use TMDB `search/person` to offer explicit chips, then switch results to `combined_credits` when selected; keep `All / Movies / TV Shows` as a scope toggle, not a separate search flow.
 - Base UI adoption should stay behind thin app-level wrappers in `src/components/ui/` so feature components keep local styling and avoid importing Base UI primitives directly.
+- The current Base UI package surface comes from `@base-ui-components/react/*` subpath imports; confirm wrapper APIs against local `node_modules` types before refactoring because parts such as radio render as namespaces like `Radio.Root`.

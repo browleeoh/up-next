@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { Star } from "lucide-react";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 
 interface StarRatingProps {
   value: number;
@@ -8,32 +9,31 @@ interface StarRatingProps {
 }
 
 export function StarRating({ value, onChange, max = 10 }: StarRatingProps) {
-  const [hoverValue, setHoverValue] = useState<number | null>(null);
-
-  const displayValue = hoverValue !== null ? hoverValue : value;
-
   return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: max }, (_, i) => i + 1).map((star) => (
-        <button
-          key={star}
-          onClick={() => onChange(star === value ? 0 : star)}
-          onMouseEnter={() => setHoverValue(star)}
-          onMouseLeave={() => setHoverValue(null)}
-          className="p-0.5 transition-transform hover:scale-110 focus:outline-none"
-        >
-          <Star
-            className={`h-6 w-6 transition-colors ${
-              star <= displayValue
-                ? "fill-amber-500 text-amber-500"
-                : "text-slate-600 hover:text-slate-500"
-            }`}
-          />
-        </button>
-      ))}
-      <span className="ml-2 text-sm text-slate-400">
-        {value > 0 ? `${value}/${max}` : "Not rated"}
-      </span>
+    <div className="space-y-3">
+      <RadioGroup
+        label="Your rating"
+        description={value > 0 ? `${value}/${max}` : `Choose a rating from 1 to ${max}.`}
+        value={value > 0 ? String(value) : ""}
+        onValueChange={(nextValue) => onChange(Number(nextValue))}
+        orientation="horizontal"
+        itemClassName="justify-center px-2.5 py-2"
+        options={Array.from({ length: max }, (_, i) => i + 1).map((star) => ({
+          value: String(star),
+          ariaLabel: `${star} out of ${max} stars`,
+          label: (
+            <span className="flex items-center gap-1.5">
+              <Star className="h-5 w-5 fill-current" />
+              <span className="text-sm">{star}</span>
+            </span>
+          ),
+        }))}
+      />
+      {value > 0 ? (
+        <Button type="button" variant="ghost" size="sm" onClick={() => onChange(0)}>
+          Clear rating
+        </Button>
+      ) : null}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Film, Tv, SortAsc, SortDesc } from "lucide-react";
 import { Select } from "@/components/ui/select";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { Button } from "@/components/ui/button";
 
 interface MediaListFiltersProps {
   showRatingSort?: boolean;
@@ -88,18 +89,21 @@ export function MediaListFilters({ showRatingSort = false }: MediaListFiltersPro
           ]}
         />
 
-        <button
+        <Button
           type="button"
           onClick={handleOrderToggle}
-          className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-100"
+          variant="ghost"
+          size="md"
+          aria-label={`Sort ${currentOrder === "desc" ? "descending" : "ascending"}`}
           title={currentOrder === "desc" ? "Descending" : "Ascending"}
+          className="px-2 text-slate-400 hover:bg-slate-700 hover:text-slate-100"
         >
           {currentOrder === "desc" ? (
             <SortDesc className="h-5 w-5" />
           ) : (
             <SortAsc className="h-5 w-5" />
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );
