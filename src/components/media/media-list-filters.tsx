@@ -1,5 +1,7 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { Film, Tv, SortAsc, SortDesc } from "lucide-react";
+import { Select } from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 
 interface MediaListFiltersProps {
   showRatingSort?: boolean;
@@ -41,45 +43,53 @@ export function MediaListFilters({ showRatingSort = false }: MediaListFiltersPro
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {/* Type Filter */}
-      <div className="flex rounded-lg bg-slate-800 p-1">
-        <TypeButton
-          active={currentType === "all"}
-          onClick={() => handleTypeChange("all")}
-        >
-          All
-        </TypeButton>
-        <TypeButton
-          active={currentType === "movie"}
-          onClick={() => handleTypeChange("movie")}
-        >
-          <Film className="h-4 w-4" />
-          Movies
-        </TypeButton>
-        <TypeButton
-          active={currentType === "tv"}
-          onClick={() => handleTypeChange("tv")}
-        >
-          <Tv className="h-4 w-4" />
-          TV
-        </TypeButton>
-      </div>
+      <SegmentedControl
+        value={currentType}
+        onValueChange={handleTypeChange}
+        ariaLabel="Filter media by type"
+        items={[
+          { value: "all", label: "All" },
+          {
+            value: "movie",
+            label: (
+              <>
+                <Film className="h-4 w-4" />
+                Movies
+              </>
+            ),
+          },
+          {
+            value: "tv",
+            label: (
+              <>
+                <Tv className="h-4 w-4" />
+                TV
+              </>
+            ),
+          },
+        ]}
+      />
 
-      {/* Sort */}
       <div className="flex items-center gap-2">
-        <select
+        <Select
           value={currentSort}
-          onChange={(e) => handleSortChange(e.target.value)}
-          className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-amber-500 focus:outline-none"
-        >
-          <option value="dateAdded">Date Added</option>
-          <option value="title">Title</option>
-          <option value="releaseYear">Release Year</option>
-          {showRatingSort && <option value="rating">Rating</option>}
-          {showRatingSort && <option value="dateCompleted">Date Completed</option>}
-        </select>
+          onValueChange={handleSortChange}
+          ariaLabel="Sort media list"
+          options={[
+            { value: "dateAdded", label: "Date Added" },
+            { value: "title", label: "Title" },
+            { value: "releaseYear", label: "Release Year" },
+            ...(showRatingSort
+              ? [
+                  { value: "rating", label: "Rating" },
+                  { value: "dateCompleted", label: "Date Completed" },
+                ]
+              : []),
+          ]}
+        />
 
         <button
+          type="button"
           onClick={handleOrderToggle}
           className="rounded-lg bg-slate-800 p-2 text-slate-400 hover:bg-slate-700 hover:text-slate-100"
           title={currentOrder === "desc" ? "Descending" : "Ascending"}
@@ -92,28 +102,5 @@ export function MediaListFilters({ showRatingSort = false }: MediaListFiltersPro
         </button>
       </div>
     </div>
-  );
-}
-
-function TypeButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-        active
-          ? "bg-amber-500 text-slate-900"
-          : "text-slate-400 hover:text-slate-100"
-      }`}
-    >
-      {children}
-    </button>
   );
 }

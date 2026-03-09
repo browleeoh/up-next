@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Film, Search as SearchIcon, Tv, X } from "lucide-react";
 import { SearchInput } from "@/components/media/search-input";
 import { MediaCard } from "@/components/media/media-card";
+import { Select } from "@/components/ui/select";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Skeleton } from "@/components/ui/skeleton";
 import { tmdbApi } from "@/lib/services/tmdb/api";
 import {
@@ -233,19 +235,20 @@ function SearchPage() {
 
           <label className="flex items-center gap-2 text-sm text-slate-300">
             <span>Genre</span>
-            <select
+            <Select
               value={genre || ""}
-              onChange={(e) => handleGenreChange(e.target.value)}
-              aria-label="Filter by genre"
-              className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
-            >
-              <option value="">Any</option>
-              {getGenreOptions().map(([id, label]) => (
-                <option key={id} value={id}>
-                  {label}
-                </option>
-              ))}
-            </select>
+              onValueChange={handleGenreChange}
+              ariaLabel="Filter by genre"
+              placeholder="Any"
+              options={[
+                { value: "", label: "Any" },
+                ...getGenreOptions().map(([id, label]) => ({
+                  value: String(id),
+                  label,
+                })),
+              ]}
+              className="min-w-40"
+            />
           </label>
 
           {hasFilters && (
@@ -297,28 +300,32 @@ function SearchPage() {
         )}
       </div>
 
-      <div className="flex gap-2">
-        <TypeButton
-          active={type === "multi"}
-          onClick={() => handleTypeChange("multi")}
-        >
-          All
-        </TypeButton>
-        <TypeButton
-          active={type === "movie"}
-          onClick={() => handleTypeChange("movie")}
-        >
-          <Film className="h-4 w-4" />
-          Movies
-        </TypeButton>
-        <TypeButton
-          active={type === "tv"}
-          onClick={() => handleTypeChange("tv")}
-        >
-          <Tv className="h-4 w-4" />
-          TV Shows
-        </TypeButton>
-      </div>
+      <SegmentedControl
+        value={type}
+        onValueChange={(value) => handleTypeChange(value as SearchType)}
+        ariaLabel="Filter search results by media type"
+        items={[
+          { value: "multi", label: "All" },
+          {
+            value: "movie",
+            label: (
+              <>
+                <Film className="h-4 w-4" />
+                Movies
+              </>
+            ),
+          },
+          {
+            value: "tv",
+            label: (
+              <>
+                <Tv className="h-4 w-4" />
+                TV Shows
+              </>
+            ),
+          },
+        ]}
+      />
 
       {isLoading && hasAnySearch && <ResultsSkeleton />}
 
@@ -452,29 +459,6 @@ function EmptyState({
   );
 }
 
-function TypeButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-        active
-          ? "bg-amber-500 text-slate-900"
-          : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 async function runSearch(params: SearchParams): Promise<SearchResults> {
   const type = params.type || "multi";
