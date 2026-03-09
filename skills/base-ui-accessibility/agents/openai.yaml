@@ -1,0 +1,4 @@
+interface:
+  display_name: "Base UI Accessibility"
+  short_description: "Base UI accessibility patterns for Up Next"
+  default_prompt: "Use $base-ui-accessibility to implement or refactor accessible Base UI primitives in Up Next."

@@ -16,3 +16,4 @@ Ralph is an autonomous AI agent loop that runs AI coding tools (Claude Code) rep
 - Stories should be small enough to complete in one context window
 - Always update AGENTS.md with discovered patterns for future iterations
 - Watch time is currently surfaced in two UI locations: the dashboard home route (`src/routes/index.tsx`) and the stats page (`src/routes/stats.tsx`); changes to this feature should verify both placements intentionally.
+- Repo-local Base UI accessibility guidance lives in `skills/base-ui-accessibility`; use it for accessibility-sensitive UI refactors and convert any unsupported Base UI Tailwind docs utilities to Tailwind v3-compatible arbitrary values.
