@@ -3,9 +3,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/database";
 import { mediaRepository } from "@/lib/db/repositories/media.repository";
+import { buildMediaMetadata } from "@/lib/services/media-metadata";
 import { tmdbApi } from "@/lib/services/tmdb/api";
 import { Film, Tv, Star, Check, Bookmark, Play } from "lucide-react";
-import type { MediaItem, TmdbSearchResult, MediaStatus } from "@/types/media";
+import type {
+  MediaItem,
+  MediaStatus,
+  TmdbMovieDetail,
+  TmdbSearchResult,
+  TmdbTvDetail,
+} from "@/types/media";
 
 interface MediaCardProps {
   media?: MediaItem;
@@ -45,15 +52,20 @@ export function MediaCard({ media, tmdbResult }: MediaCardProps) {
     mutationFn: async (status: MediaStatus) => {
       if (!tmdbResult) return;
 
+      const detail: TmdbMovieDetail | TmdbTvDetail =
+        tmdbResult.media_type === "movie"
+          ? await tmdbApi.getMovie(tmdbResult.id)
+          : await tmdbApi.getTvShow(tmdbResult.id);
+      const metadata = buildMediaMetadata(
+        tmdbResult.media_type as "movie" | "tv",
+        detail
+      );
+
       await mediaRepository.add({
         tmdbId: tmdbResult.id,
         type: tmdbResult.media_type as "movie" | "tv",
         status,
-        title: tmdbResult.title || tmdbResult.name || "",
-        posterPath: tmdbResult.poster_path,
-        releaseYear: releaseYear,
-        runtime: null,
-        genres: tmdbResult.genre_ids || [],
+        ...metadata,
         dateAdded: new Date(),
         dateCompleted: status === "watched" ? new Date() : null,
         rating: null,

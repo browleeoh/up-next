@@ -15,6 +15,7 @@ export interface MediaItem {
   posterPath: string | null;
   releaseYear: number | null;
   runtime: number | null;
+  totalEpisodes?: number | null;
   genres: number[];
 }
 
@@ -25,6 +26,7 @@ export interface EpisodeProgress {
   episodeNumber: number;
   watched: boolean;
   watchedDate: Date | null;
+  runtimeMinutes?: number | null;
 }
 
 export interface TmdbCache {
