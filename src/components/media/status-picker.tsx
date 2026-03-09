@@ -1,5 +1,6 @@
 import { Bookmark, Play, Check, Trash2 } from "lucide-react";
-import { SegmentedControl } from "@/components/ui/segmented-control";
+import { RadioGroup } from "@/components/ui/radio-group";
+import { Button } from "@/components/ui/button";
 import type { MediaStatus } from "@/types/media";
 
 interface StatusPickerProps {
@@ -32,13 +33,15 @@ export function StatusPicker({
   ];
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <SegmentedControl
+    <div className="space-y-3">
+      <RadioGroup
+        label="Status"
+        description="Choose how this title should appear in your library."
         value={currentStatus || "watchlist"}
         onValueChange={(value) => onStatusChange(value as MediaStatus)}
-        ariaLabel="Update media status"
+        orientation="horizontal"
         itemClassName="px-4 py-2"
-        items={statuses.map(({ status, label, icon: Icon }) => ({
+        options={statuses.map(({ status, label, icon: Icon }) => ({
           value: status,
           label: (
             <>
@@ -50,14 +53,15 @@ export function StatusPicker({
       />
 
       {currentStatus && onRemove && (
-        <button
+        <Button
           type="button"
           onClick={onRemove}
-          className="flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/30"
+          variant="ghost"
+          className="text-red-400 hover:bg-red-900/30 hover:text-red-300"
         >
           <Trash2 className="h-4 w-4" />
           Remove
-        </button>
+        </Button>
       )}
     </div>
   );

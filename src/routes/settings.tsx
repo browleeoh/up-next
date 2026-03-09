@@ -5,6 +5,7 @@ import { db } from "@/lib/db/database";
 import { exportService } from "@/lib/services/export.service";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 import {
   Settings as SettingsIcon,
   Download,
@@ -52,10 +53,6 @@ function SettingsPage() {
       setExportStatus("error");
       setTimeout(() => setExportStatus("idle"), 3000);
     }
-  };
-
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
   };
 
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,8 +134,12 @@ function SettingsPage() {
             accept=".json"
             onChange={handleImport}
             className="hidden"
+            aria-label="Import backup file"
           />
-          <Button onClick={handleImportClick} variant="secondary">
+          <Button
+            onClick={() => fileInputRef.current?.click()}
+            variant="secondary"
+          >
             <Upload className="h-4 w-4 mr-2" />
             {importStatus === "success" ? "Imported!" : "Import Data"}
             {importStatus === "success" && <Check className="h-4 w-4 ml-2 text-emerald-400" />}
@@ -158,38 +159,28 @@ function SettingsPage() {
           <h2 className="text-lg font-semibold text-red-400">Danger Zone</h2>
         </div>
 
-        {!showClearConfirm ? (
-          <div>
-            <p className="text-sm text-slate-400 mb-4">
-              Permanently delete all your data. This action cannot be undone.
-            </p>
-            <Button
-              onClick={() => setShowClearConfirm(true)}
-              variant="danger"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Clear All Data
-            </Button>
-          </div>
-        ) : (
-          <div className="rounded-lg bg-red-900/20 p-4">
-            <p className="text-sm text-red-300 mb-4">
-              Are you sure? This will delete {counts.mediaCount} items and{" "}
-              {counts.episodeCount} episode records permanently.
-            </p>
-            <div className="flex gap-3">
-              <Button onClick={handleClearData} variant="danger">
-                Yes, Delete Everything
-              </Button>
-              <Button
-                onClick={() => setShowClearConfirm(false)}
-                variant="secondary"
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
+        <div>
+          <p className="text-sm text-slate-400 mb-4">
+            Permanently delete all your data. This action cannot be undone.
+          </p>
+          <Button onClick={() => setShowClearConfirm(true)} variant="danger">
+            <Trash2 className="h-4 w-4 mr-2" />
+            Clear All Data
+          </Button>
+          <AlertDialog
+            open={showClearConfirm}
+            onOpenChange={setShowClearConfirm}
+            title="Clear all local data?"
+            description={
+              <>
+                This will permanently delete {counts.mediaCount} saved titles and{" "}
+                {counts.episodeCount} episode progress records from this browser.
+              </>
+            }
+            confirmLabel="Yes, delete everything"
+            onConfirm={handleClearData}
+          />
+        </div>
       </Card>
 
       {/* About */}

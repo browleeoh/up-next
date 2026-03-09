@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Save, X } from "lucide-react";
+import { Field, Textarea } from "@/components/ui/field";
 
 interface ReviewFormProps {
   value: string;
@@ -29,16 +30,20 @@ export function ReviewForm({ value, onSave }: ReviewFormProps) {
 
   return (
     <div className="space-y-3">
-      <textarea
-        value={localValue}
-        onChange={(e) => {
-          setLocalValue(e.target.value);
-          if (!isEditing) setIsEditing(true);
-        }}
-        onFocus={() => setIsEditing(true)}
-        placeholder="Write your thoughts about this movie or show..."
-        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 min-h-[120px] resize-y"
-      />
+      <Field
+        label="Your review"
+        description="Write your thoughts about this movie or show."
+      >
+        <Textarea
+          value={localValue}
+          onChange={(e) => {
+            setLocalValue(e.target.value);
+            if (!isEditing) setIsEditing(true);
+          }}
+          onFocus={() => setIsEditing(true)}
+          placeholder="Write your thoughts about this movie or show..."
+        />
+      </Field>
 
       {isEditing && hasChanges && (
         <div className="flex gap-2">
