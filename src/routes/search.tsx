@@ -147,7 +147,9 @@ function SearchPage() {
   };
 
   const handlePersonSelect = (person: TmdbPersonSearchResult) => {
+    setSearchValue("");
     updateSearch({
+      q: undefined,
       personId: person.id,
       personName: person.name,
     });
