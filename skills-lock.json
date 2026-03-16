@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "computedHash": "3c1e3549339c98c44c8c75f676f56ebc0adcd4494ec27b7f1851f7c5a7c2deaf"
+    },
+    "lightpanda-browser": {
+      "source": "aradotso/trending-skills",
+      "sourceType": "github",
+      "computedHash": "02345b0c8ca34d2ecba666a0dbab79f24b0cbd3db1f1ea402cb755d71a9ff9f2"
+    }
+  }
+}
