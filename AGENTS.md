@@ -17,6 +17,7 @@ Ralph is an autonomous AI agent loop that runs AI coding tools (Claude Code) rep
 - Always update AGENTS.md with discovered patterns for future iterations
 - Watch time is currently surfaced in two UI locations: the dashboard home route (`src/routes/index.tsx`) and the stats page (`src/routes/stats.tsx`); changes to this feature should verify both placements intentionally.
 - Watch-time totals should now come from a shared calculator that combines watched movie runtime, persisted TV episode `runtimeMinutes`, and full-series estimates from TV `totalEpisodes`; keep episode/runtime metadata durable instead of relying on expiring TMDB cache entries at render time.
+- The stats quick watch-time card on `src/routes/stats.tsx` is a watched-time summary only; do not label leftover minutes as `remaining` unless implementing a separate backlog metric for `watchlist`/`watching`.
 - Repo-local Base UI accessibility guidance lives in `skills/base-ui-accessibility`; use it for accessibility-sensitive UI refactors and convert any unsupported Base UI Tailwind docs utilities to Tailwind v3-compatible arbitrary values.
 - Search state on `src/routes/search.tsx` is URL-driven; richer search now uses explicit `year`, `genre`, and `personId/personName` params instead of hidden parsing so back/forward navigation and shared links preserve refinements.
 - Person-based search is suggestion-driven: use TMDB `search/person` to offer explicit chips, then switch results to `combined_credits` when selected; keep `All / Movies / TV Shows` as a scope toggle, not a separate search flow.

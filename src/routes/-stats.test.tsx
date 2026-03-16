@@ -67,10 +67,78 @@ describe("StatsPage", () => {
 
     await screen.findByText("Statistics");
     await waitFor(() => {
-      expect(screen.getByText("Total hours")).toBeInTheDocument();
-      expect(screen.getByText("24m remaining")).toBeInTheDocument();
+      expect(screen.getByText("1.4")).toBeInTheDocument();
+      expect(screen.getByText("Total hours watched")).toBeInTheDocument();
+      expect(screen.getByText("1h 24m watched")).toBeInTheDocument();
     });
     expect(screen.queryByText("No statistics yet")).not.toBeInTheDocument();
+  });
+
+  it("renders minutes without a watched-time subtitle for short totals", async () => {
+    const mediaId = (await db.mediaItems.add({
+      tmdbId: 501,
+      type: "tv",
+      status: "watching",
+      rating: null,
+      review: null,
+      dateAdded: new Date(),
+      dateCompleted: null,
+      title: "Short Episode Show",
+      posterPath: null,
+      releaseYear: 2024,
+      runtime: 38,
+      totalEpisodes: 12,
+      genres: [18],
+    })) as number;
+
+    await db.episodeProgress.add({
+      mediaId,
+      seasonNumber: 1,
+      episodeNumber: 1,
+      watched: true,
+      watchedDate: new Date(),
+      runtimeMinutes: 38,
+    });
+
+    await act(async () => {
+      render(<StatsPage />);
+    });
+
+    await screen.findByText("Statistics");
+    await waitFor(() => {
+      expect(screen.getByText("38")).toBeInTheDocument();
+      expect(screen.getByText("Total minutes watched")).toBeInTheDocument();
+    });
+    expect(screen.queryByText("38m watched")).not.toBeInTheDocument();
+  });
+
+  it("renders day-level watched totals with exact day and hour detail", async () => {
+    await db.mediaItems.add({
+      tmdbId: 600,
+      type: "movie",
+      status: "watched",
+      rating: null,
+      review: null,
+      dateAdded: new Date(),
+      dateCompleted: new Date(),
+      title: "Very Long Marathon",
+      posterPath: null,
+      releaseYear: 2024,
+      runtime: 1598,
+      totalEpisodes: null,
+      genres: [18],
+    });
+
+    await act(async () => {
+      render(<StatsPage />);
+    });
+
+    await screen.findByText("Statistics");
+    await waitFor(() => {
+      expect(screen.getByText("1.1")).toBeInTheDocument();
+      expect(screen.getByText("Total days watched")).toBeInTheDocument();
+      expect(screen.getByText("1d 2h watched")).toBeInTheDocument();
+    });
   });
 
   it("keeps the empty state when nothing is watched", async () => {
