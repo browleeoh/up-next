@@ -79,14 +79,27 @@ export function StatsPage() {
 
   const formatWatchTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
     const days = Math.floor(hours / 24);
+    const remainingHours = hours % 24;
+
     if (days > 0) {
-      return { value: days, unit: "days", detail: `${hours % 24}h remaining` };
+      return {
+        value: (minutes / (60 * 24)).toFixed(1),
+        unit: "days watched",
+        detail: `${days}d ${remainingHours}h watched`,
+      };
     }
+
     if (hours > 0) {
-      return { value: hours, unit: "hours", detail: `${minutes % 60}m remaining` };
+      return {
+        value: (minutes / 60).toFixed(1),
+        unit: "hours watched",
+        detail: `${hours}h ${remainingMinutes}m watched`,
+      };
     }
-    return { value: minutes, unit: "minutes", detail: "" };
+
+    return { value: minutes, unit: "minutes watched", detail: "" };
   };
 
   const watchTime = formatWatchTime(stats.totalWatchTime);
